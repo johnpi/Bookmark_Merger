@@ -113,3 +113,5 @@ hyperlinks_bookmarkDict(bookdict) - returns a list of all hyperlinks found in a 
 TO DO
 
 Devide the module into two; (1) the pyparsing grammar and (2) the 'bookmarkDict' functions
+
+Original project location http://bookmark-merger.sourceforge.net/
