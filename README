@@ -1,0 +1,115 @@
+Introduction
+------------
+
+If you have multiple firefox bookmark.html files, this code can merge them together while preserving their bookmark directory structures and removing the duplicates within each folder. i.e. duplicates not in the same folder will be preserved.
+
+
+Installing
+--------
+
+If you are using the compiled executable: bookmark_merger-0.2.3.exe then there is no installation! The easiest thing is to move the executable into a directory containing the bookmarks that you want to merge.
+
+Using the code, the simplest way to use this code is to extract the files into a suitable directory and run the script bookmark_merger.py (see below).
+
+Otherwise, running 'python setup.py install' will place the files into the python site-packages directory and the bookmark_merger.py script into the python/scripts directory. bookmark_merger can then be run directly from the commandline in any chosen directory (i.e. the directory with the bookmarks in it!).
+
+If you choose to download the windows installer then this is almost equivalent to runnning the 'python setup.py install' command on the extracted source code but I do not think that dependencies are handled (?).
+
+The python module and scripts were written and tested using python ver. 2.6. In addition, it depends on the pyparsing module (versions 1.51 -1.55+ should all work). If you wish to use setup.py to install the module then setuptools will also be required (v.0.6).
+
+
+Quick Start
+------------
+
+If you just want to merge several firefox bookmark files as quickly as possible then you can use the script 'bookmark_merger.py' or the command-line executable bookmark_merger-0.2.3.exe.
+
+bookmark_merger is best run on the command line. Run bookmark_merger.py -h or bookmark_merger-0.2.3.exe -h for help.
+
+Usage: bookmark_merger.py [options] dir_path1 dir_path2
+
+All html files in the given directories will be assumed to be firefox
+bookmark.html files.
+If no directory is given then the current directory will be used
+
+Options:
+  -h, --help            show this help message and exit
+  -r, --recursive       Recursively explore given directory for bookmark files
+  -o FILE, --outfile=FILE
+                        write output to FILE [default: merged bookmarks.html]
+
+
+Description of library
+--------------------
+
+This is a python library/module written mostly for the purpose of merging multiple bookmark files together. It works only with the bookmark.html files created by firefox (although possibly netscape would use the same files?). Rather than removing all duplicate hyperlinks, it works with the folder structure of the bookmarks; merging together two bookmark files in the same way that two recursive filesystem directories would be combined. Folders with the same name are merged appropriately with the removal of duplicate entries and the merging of entries with the same hyperlink but different strings (see the function - merge_entries).
+
+The library consists of two parts. The first is a parsing grammar defined using the 'pyparsing library'. This turns a bookmark file into a recursive collection of strings along with some named attributes consisting of folder name and lists of found hyperlinks. The pyparsing module documentation should be consulted to understand the pyparsing.parseResults class. Optionally the original string can be recreated from the parseResults instance (see function -serialize).
+
+The second part is a set of functions for creating a recursive set of dictionaries and for merging two or more bookmark files together.
+
+The module is expected to be used at the python shell or in a script. The example script - 'example.py' - shows high level use.
+
+
+Main Functions & Objects
+-------------------------
+
+bookmarkshtml - a pyparsing grammar. Use via 
+		'parseresult=bookmarkshtml.parseString(str)' 
+		or '
+		parseresult=bookmarkshtml.parseFile(file_obj)'
+		
+		'parseresult' is an instance of pyparsing.parseResults() which is a class 
+		that can act both like a list and dictionary (see pyparsing documentation). It is
+		grouping object that either contains strings or instances of itself.
+
+hyperlinks(parseresult) - returns a list of all hyperlinks found in the file.
+
+clean_tree(parseresult) - returns a set of nested lists and tuples containing the hyperlinks 
+		using the original folder structure of the bookmark file
+		
+serialize(parseresult) - turns a parseresult instance back into a bookmark.html string. If used
+		directly on the parseresult (e.g. before any editting), it will exactly recreate the
+		original string.
+
+duplicates_dict(parseresults) - returns a dictionary with keys giving any duplicates found in 
+		the top level of the parseresults and values giving their indices.
+		
+top_folders_dict(parseresults) - returns a dictionary with keys giving the names of any folders
+		found in the top level of the parseresults and values giving their indices in the 
+		parseresults structure.
+
+depersonalisefolders(parseresult) - removes personnal_toolbar_folder tags from parseresult 
+		objects. Acts in place.
+
+####
+
+merge_entries(entry1,entry2) - given two token strings it parses them. The string with the most
+		recent 'LAST_MODIFIED' or 'LAST_VISIT' tag is returned as the new string except for
+		the tag 'ADD_DATE' which uses the earliest value found. It is meant to check that entries
+		have the same hyperlink but this currently doesn't work if an entry has no 'HREF' tag.
+		Useful information is printed to std out.
+
+duplicates(seq) - given any iterable sequence, it will return any items which have duplicates. 
+####
+
+bookmarkDict(parseresult) - returns a set of nested dictionaries using hyperlinks/folder names
+		as keys and 'original entry strings'/sub-dictionaries as values. Original folder name
+		strings are stored under the key 'Folder' within a given folder. Since a dictionary
+		must have uniques keys, any duplicate hyperlinks or folders with the same name
+		are merged by calling merge_entries or merge_bookmarkDict appropriately.
+		Useful information is printed to std out.
+		
+merge_bookmarkDict(bookdict1,bookdict2) - merges 2 bookmarkDict dictionaries. Duplicate 
+		entries are removed, entries with identical hyperlinks but non-identical strings are 
+		merged using merge_entries. The function will act recursively if sub-directories with 
+		identical names are found. Useful information is printed to std out.
+
+serialize_bookmarkDict(bookdict) - turns a bookmarkDict dictionary back into a bookmark.html 
+		type string. Note that any ordering is lost with regard to original file.
+
+hyperlinks_bookmarkDict(bookdict) - returns a list of all hyperlinks found in a 'bookmarkDict' dictionary
+
+
+TO DO
+
+Devide the module into two; (1) the pyparsing grammar and (2) the 'bookmarkDict' functions

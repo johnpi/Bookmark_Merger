@@ -1,0 +1,27 @@
+Metadata-Version: 1.1
+Name: bookmark_merger
+Version: 0.2.3
+Summary: code for merging multiple firefox bookmark.html files
+Home-page: https://sourceforge.net/projects/bookmark-merger/
+Author: robochat
+Author-email: rjsteed@talk21.com
+License: LGPLv3
+Description: Bookmarks merger allows the user to merge multiple firefox bookmark.html files 
+        together, taking care to intelligently merge duplicate folder layouts. The script
+        bookmark_merger.py can be used on a folder of bookmarks.html files or the 
+        bookmark_parser.py can be imported as a module. More detailed instructions exist
+        in the README file and on the sourceforge site.
+                
+Keywords: firefox
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
+Classifier: Programming Language :: Python
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Intended Audience :: System Administrators
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Utilities
+Classifier: Topic :: Internet :: WWW/HTTP :: Browsers
